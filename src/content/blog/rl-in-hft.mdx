@@ -1,6 +1,6 @@
 ---
 title: 'Why RL will win in HFT'
-description: 'Hypothesis why the next growth frontier for ML systems will be Reinforcement Learning. And why HFT firms should care.'
+description: 'Hypothesis why the next growth frontier for HFT will be agentic Reinforcement Learning.'
 pubDate: 2026-04-05
 ---
 
@@ -26,66 +26,52 @@ Infra is still bottlenecked by review velocity and by how much testing and deplo
 Tools like CodeRabbit are already starting to absorb some of the review burden. Testing and deployment are more firm-specific, so progress there is messier, but coding agents are clearly pushing in the same direction.
 TDD and similar engineering habits also help because they give agents something concrete to verify instead of asking them to reason in the dark.
 
-So is "Infra" solved by agents? No. We still need people in the loop, if only because accountability does not disappear.
+So is "Infra" solved by agents? No. We still need people in the loop, because accountability does not disappear. I think we should make "Infra" agent-ready by
 
-- Invest deeply in observability infrastructure. That is what gives a codebase any chance of self-healing during outages.
-- Write skills or agents that can drive `perf` and `gdb` for you.
-- Implement Karpathy-style auto-research for finding hotspots in latency from captured stats.
-- Consume Agner Fog content and implement it across the codebase.
+1. Investing deeply in observability infrastructure. That is what gives a codebase any chance of self-healing during outages.
+2. Writing skills or agents that can drive `perf` and `gdb` for you.
+3. Implementing Karpathy-style auto-research for finding hotspots in latency from captured stats.
+4. Consuming Agner Fog content and implement it across the codebase.
 
 ## Work in Strategy
 
-Claude/Codex has helped strategy teams too. The loop from idea to backtest is shorter than it used to be, but the loop from idea to conviction is still painfully long.
+I think Claude/Codex has helped strategy teams too. The loop from idea to backtest is shorter than it used to be, but the loop from idea to conviction is still painfully long.
 Strategy is currently bottlenecked by simulator quality, data quality, and objective design. Backtests are cheap. Truth is expensive.
 
 Agents can already help here:
 
 - translate hypotheses into research code faster
-- sweep feature sets and market regimes faster
-- surface failure modes in inventory and execution
 - run broader post-trade analysis on why a strategy actually made or lost money
 
-Most strategy stacks are still a pile of predictors, decision rules, execution logic, and risk heuristics wired together over time.
-That stack can work very well, but it is usually locally optimized rather than globally optimized.
+Most strategy stacks are still assembled piece by piece: signals, decision rules, execution logic, and risk heuristics layered in over time.
+They can work well, but they are usually optimized component by component rather than as a whole.
 
-One model predicts. Another decides whether to quote. Somewhere else, inventory is managed. Then risk limits get layered on top.
-Over time you end up with a system that works, but only because a lot of hand-tuned pieces happen to coexist.
+One model forecasts. Another decides whether to quote. Another manages inventory. Risk controls sit on top.
+The result can be effective, but it often depends on a fragile balance of hand-tuned parts.
 
-That is exactly where RL becomes interesting. Trading is not just a prediction problem. It is a sequential decision problem under uncertainty.
-The real question is not "can I predict the next move?"
-It is "given my state, inventory, venue, latency, and constraints, what action should I take to maximize the long-run objective?"
+That is where RL becomes interesting. Trading is not only a prediction problem; it is a sequential decision problem (Markov Decision Process) under uncertainty.
+The key question is not "can I predict the next move?" but "given my state, inventory, venue, latency, and constraints, what action best serves the long-run objective?"
 
-In HFT, that objective is never raw PnL alone. It is some combination of:
+In HFT, that objective is never raw PnL alone. It is some combination of PnL. inventory risk, drawdown, fill quality, capital usage and some other constraints
 
-- PnL
-- inventory risk
-- drawdown
-- tail behavior
-- fill quality
-- adverse selection
-- capital usage
-- compliance and hard risk constraints
-
-Current strategy stacks usually encode these tradeoffs through hand-written heuristics and penalty terms scattered across the system. RL offers a more native way to represent the problem: learn a policy that acts while accounting for those tradeoffs over time.
+Current strategy stacks usually encode these tradeoffs through hand-written heuristics and penalty. RL offers a more native way to represent the problem: learn a policy that acts while accounting for those tradeoffs over time.
 
 ## Innovation gets democratized, alpha dies faster
 
-Claude/Codex also changes another thing: who gets to innovate.
+Claude/Codex also changes another thing: who gets to innovate and compresses the timeline.
 
 Earlier, a lot of ideas died because they were too annoying to implement, too expensive to test, or too dependent on a small set of highly productive people.
 That friction acted like a filter. It was not a good filter, but it was still a filter.
 
-Now the cost of turning an idea into code, a backtest, a dashboard, or a simulator experiment is dropping fast.
+Now the cost of turning an idea into code - backtest, simulator experiment is dropping fast.
 More people inside a firm can test ideas, and more firms can converge on the same kinds of ideas at the same time.
 
-The democratization of innovation will reduce the half-life of alpha.
+The democratization of innovation will definitely reduce the half-life of alpha.
 
-If everyone can iterate faster, then simple edges get discovered, copied, and competed away much sooner.
+If everyone can iterate faster, then simple edges get discovered, copied, and erodes away.
 An idea that used to survive for months may now survive for weeks. An idea that used to survive for weeks may now survive for days.
 
 This matters because it changes what kind of edge is durable.
-
-Static signals get commoditized. Hand-tuned heuristics do too. Even research workflows start to look interchangeable.
 
 What becomes more valuable is the ability to adapt continuously, re-optimize strategies quickly, and operate against a moving market.
 That is another reason RL matters. In a world where alpha decays faster, the value shifts from finding one good rule to building a system that keeps updating its behavior as the environment changes.
@@ -96,44 +82,24 @@ The strongest case for RL in HFT is that the industry already thinks in objectiv
 
 A trading agent naturally fits the RL framing:
 
-- state: order book, trades, queue position, inventory, venue state, volatility regime, and latency-sensitive internal signals
-- action: post, cancel, cross, resize, skew quotes, hedge, route, or wait
+- state: order book, trades, queue position (not visible), inventory, venue state, volatility regime.
+- action: new order, cancel order, modify order, resize order, hedge or wait
 - reward: risk-adjusted PnL with explicit penalties for inventory, toxic flow, slippage, and constraint breaches
-
-That framing is much closer to reality than "predict next tick and hope the hand-built policy does the rest."
-
-## Why current ML in HFT plateaus
-
-A lot of ML in HFT today is still narrow prediction machinery: better features, better labels, better calibration, better online adaptation.
-
-That work matters, but eventually it runs into two limits.
-
-First, the marginal gain from improving a forecast is often smaller than the gain from improving how the strategy reacts to that forecast.
-
-Second, once the strategy logic becomes a maze of overrides and guardrails, the stack becomes hard to reason about globally. You end up with a system that is impressive in parts and brittle in aggregate.
-
-RL is interesting because it shifts the optimization target from "make the forecast a bit better" to "make the full decision process better."
 
 ## Where RL wins first
 
-I do not think the first wins come from some fully autonomous universal trader.
+I do not think the first wins come from some fully "autonomous universal trader".
 
 The first wins are likely to show up in narrower control problems such as:
 
 - market making with dynamic inventory and quote skew management
-- execution and smart order routing
+- execution and smart order routing among venues.
 - hedging under microstructure and latency constraints
 - dynamic participation logic during changing regimes
 
 These are domains where the action space is clear, the feedback signal exists, and the value of adapting over time is obvious.
 
-The firms that win here will invest heavily in:
-
-- high-fidelity market replay
-- queue-position aware simulation
-- realistic latency and routing models
-- synthetic perturbations and stress scenarios
-- clean logging of state, action, and outcome for strategy evaluation
+The firms that win here will invest heavily in high-fidelity market replay and good quality simulation modelling realistic latency and smart routing logic.
 
 ## Offline RL before online RL
 
@@ -142,7 +108,7 @@ I do not expect serious firms to hand live capital to a strategy that was traine
 The path is more likely:
 
 1. learn from historical data and replays
-2. evaluate counterfactually as far as possible
+2. explore different (off-policy) evaluations
 3. deploy behind tight guardrails
 4. start with narrow scope and small capital
 5. expand only after repeated evidence
@@ -155,33 +121,23 @@ If coding agents compress idea-to-production latency, then infra teams can ship 
 
 That changes the feasibility frontier for RL. The bottleneck shifts away from "can we build the system?" toward "do we have the data, simulator, and organizational courage to use it?"
 
-Infra does not disappear. If anything, it matters more, because better infra makes RL tractable sooner than most strategy teams currently assume.
+Infra does not disappear. If anything, it matters more, because better infra makes RL tractable sooner.
 
 ## Why org structure slows adoption
 
 The current Infra and Strategy split is useful operationally, but it also slows down RL adoption.
 
-RL forces a more end-to-end view:
+RL forces a more end-to-end view of the system - strategy development, order execution, sim-live match & PnL.
 
-- data quality matters
-- simulator quality matters
-- latency modeling matters
-- production controls matter
-- reward design matters
-
-No single silo owns all of that today.
+No single entity owns all of that today.
 
 The first RL-native HFT teams will probably look less like "research hands model to engineering" and more like tightly coupled pods that own environment, strategy, evaluation, and deployment together.
 
-## Risks and objections
+## Challenges
 
-The objections here are real, and they should be taken seriously.
+The challenges are real.
 
-- Markets are non-stationary.
-- Simulators are approximations.
-- Reward hacking is dangerous.
-- Online exploration is expensive.
-- Hard risk limits cannot be optional.
+Markets are non-stationary in nature. Simulators on market data are just approximations. Given you want a train a RL-model, reward hacking is a serious threat. Online exploration is too expensive. And risk limits have to be imposed.
 
 None of these kill the idea. They just set a very high engineering bar.
 
@@ -193,10 +149,10 @@ My bet is narrower:
 
 - infra gets dramatically more leveraged through coding agents
 - data and simulation quality improve
-- some strategy teams stop thinking in terms of isolated predictors and start thinking in terms of policies
+- some strategy teams stop thinking in terms of isolated signals and start thinking in terms of policies
 - the first serious RL wins come from constrained sub-problems, not universal systems
 
-Once that happens, the rest of the industry will update quickly. HFT already chases measurable edge aggressively. If RL produces edge in even a few well-bounded domains, capital and talent will move.
+Once that happens, the rest of the industry will catch on quickly. HFT already chases edge aggressively. If RL produces edge in even a few well-bounded domains, capital and talent will move.
 
 The future is here. The real question is which firms are willing to build the environment, the controls, and the organizational structure required to use it.
 
