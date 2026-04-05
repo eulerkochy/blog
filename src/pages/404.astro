@@ -1,0 +1,140 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="404 — Signal Lost | Infinity & Beyond"
+			description="The requested resource could not be found."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="lost-shell">
+				<p class="lost-code">ERR::404::NODE_UNREACHABLE</p>
+				<h1 class="lost-heading" data-text="Signal Lost">Signal Lost</h1>
+				<p class="lost-desc">
+					The node you requested has been decommissioned, moved, or never
+					existed in this transmission layer.
+				</p>
+				<a class="button-primary" href="/">Return to base</a>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+<style>
+	.lost-shell {
+		display: grid;
+		gap: 1.5rem;
+		justify-items: center;
+		text-align: center;
+		padding: 6rem 1rem 4rem;
+		min-height: calc(100svh - 4.75rem - 8rem);
+		align-content: center;
+	}
+
+	.lost-code {
+		font-family: var(--mono);
+		font-size: 0.78rem;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+
+	.lost-heading {
+		position: relative;
+		font-size: clamp(4rem, 12vw, 10rem);
+		animation: glitch-persistent 3s ease-in-out infinite;
+	}
+
+	.lost-heading::before,
+	.lost-heading::after {
+		content: attr(data-text);
+		position: absolute;
+		inset: 0;
+	}
+
+	.lost-heading::before {
+		color: var(--accent-cold);
+		clip-path: inset(0 0 65% 0);
+		animation: glitch-slice-top 3s ease-in-out infinite;
+	}
+
+	.lost-heading::after {
+		color: var(--accent);
+		clip-path: inset(65% 0 0 0);
+		animation: glitch-slice-bottom 3s ease-in-out infinite;
+	}
+
+	.lost-desc {
+		max-width: 28rem;
+		color: var(--muted);
+		font-size: 1.05rem;
+	}
+
+	@keyframes glitch-persistent {
+		0%, 85%, 100% {
+			text-shadow: none;
+		}
+		86% {
+			text-shadow:
+				2px 0 var(--accent-cold),
+				-2px 0 var(--accent);
+		}
+		88% {
+			text-shadow:
+				-2px 0 var(--accent-cold),
+				2px 0 var(--accent);
+		}
+		90% {
+			text-shadow: none;
+		}
+		92% {
+			text-shadow:
+				1px 0 var(--accent-cold),
+				-1px 0 var(--accent);
+		}
+	}
+
+	@keyframes glitch-slice-top {
+		0%, 85%, 100% {
+			transform: translate(0);
+		}
+		86% {
+			transform: translate(-3px, 0);
+		}
+		88% {
+			transform: translate(3px, 0);
+		}
+		90% {
+			transform: translate(0);
+		}
+		92% {
+			transform: translate(2px, 0);
+		}
+	}
+
+	@keyframes glitch-slice-bottom {
+		0%, 85%, 100% {
+			transform: translate(0);
+		}
+		86% {
+			transform: translate(3px, 0);
+		}
+		88% {
+			transform: translate(-3px, 0);
+		}
+		90% {
+			transform: translate(0);
+		}
+		92% {
+			transform: translate(-2px, 0);
+		}
+	}
+</style>
