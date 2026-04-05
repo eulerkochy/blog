@@ -16,6 +16,7 @@ const { title, description, pubDate, updatedDate, headings = [], readingTime, pr
 const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
+<!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={title} description={description} />
@@ -253,7 +254,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 									<p class="toc-label">Contents</p>
 									<ol>
 										{tocHeadings.map((h) => (
-											<li class={h.depth === 3 ? 'toc-h3' : ''}>
+											<li class:list={[{ 'toc-h3': h.depth === 3 }]}>
 												<a href={`#${h.slug}`}>{h.text}</a>
 											</li>
 										))}
@@ -289,16 +290,16 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 			</article>
 		</main>
 		<Footer />
+		<script>
+			const bar = document.getElementById('progress-bar');
+			function updateProgress() {
+				const scrollTop = window.scrollY;
+				const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+				const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+				if (bar) bar.style.width = `${Math.min(progress, 100)}%`;
+			}
+			window.addEventListener('scroll', updateProgress, { passive: true });
+			updateProgress();
+		</script>
 	</body>
 </html>
-<script>
-	const bar = document.getElementById('progress-bar');
-	function updateProgress() {
-		const scrollTop = window.scrollY;
-		const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-		const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-		if (bar) bar.style.width = `${Math.min(progress, 100)}%`;
-	}
-	window.addEventListener('scroll', updateProgress, { passive: true });
-	updateProgress();
-</script>
