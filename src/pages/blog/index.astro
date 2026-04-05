@@ -9,97 +9,232 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+const featuredPost = posts[0];
+const archivePosts = posts.slice(1);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-				flex: 1;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--gray-dark));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .title {
-				color: var(--accent);
-				text-shadow: var(--neon-glow);
-			}
-			ul li a:hover .date {
-				color: var(--accent-secondary);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
+			<div class="page-shell archive-shell">
+				<section class="archive-hero">
+					<div class="section-heading">
+						<p class="eyebrow">Archive / transmission log</p>
+						<h1>Blog</h1>
+						<p>
+							Longform notes on systems programming, low-level design, language
+							ergonomics, and the debugging paths worth documenting.
+						</p>
+					</div>
+					<div class="archive-summary">
+						<p>Total entries</p>
+						<strong>{posts.length.toString().padStart(2, '0')}</strong>
+					</div>
+				</section>
+
+				{
+					featuredPost && (
+						<section class="featured-post">
+							<div class="featured-meta">
+								<p class="eyebrow">Latest dispatch</p>
+								<p class="featured-date">
+									<FormattedDate date={featuredPost.data.pubDate} />
+								</p>
+							</div>
+							<a href={`/blog/${featuredPost.id}/`}>
+								<h2>{featuredPost.data.title}</h2>
+								<p>{featuredPost.data.description}</p>
+								<span>Read post</span>
+							</a>
+						</section>
+					)
+				}
+
+				<section class="archive-listing">
+					<div class="section-heading">
+						<p class="eyebrow">All entries</p>
+						<h2>Everything on record.</h2>
+					</div>
+					<ol>
+						{archivePosts.map((post, index) => (
 							<li>
 								<a href={`/blog/${post.id}/`}>
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
+									<p class="archive-index">
+										{String(index + 2).padStart(2, '0')}
+									</p>
+									<div class="archive-copy">
+										<h3>{post.data.title}</h3>
+										<p>{post.data.description}</p>
+									</div>
+									<p class="archive-date">
 										<FormattedDate date={post.data.pubDate} />
 									</p>
 								</a>
 							</li>
-						))
+						))}
+					</ol>
+					{
+						archivePosts.length === 0 && (
+							<p class="archive-empty">
+								Only one post is live right now. The archive will expand from
+								here.
+							</p>
+						)
 					}
-				</ul>
-			</section>
+				</section>
+			</div>
 		</main>
 		<Footer />
 	</body>
 </html>
+<style>
+	.archive-shell {
+		padding-top: 3rem;
+	}
+
+	.archive-hero {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: end;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding-bottom: 2rem;
+	}
+
+	.archive-summary {
+		display: grid;
+		gap: 0.35rem;
+		min-width: 10rem;
+		padding: 1.2rem 1.3rem;
+		border: 1px solid var(--line);
+		border-radius: 1.4rem;
+		background: var(--surface);
+		text-align: right;
+	}
+
+	.archive-summary p {
+		font-family: var(--mono);
+		font-size: 0.74rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+
+	.archive-summary strong {
+		font-size: clamp(2.3rem, 5vw, 3.5rem);
+		color: var(--accent);
+	}
+
+	.featured-post {
+		display: grid;
+		grid-template-columns: minmax(0, 0.35fr) minmax(0, 1fr);
+		gap: 1.5rem;
+		padding: 1.6rem 0 2.5rem;
+		border-top: 1px solid var(--line);
+		border-bottom: 1px solid var(--line);
+	}
+
+	.featured-meta {
+		display: grid;
+		align-content: start;
+		gap: 0.7rem;
+	}
+
+	.featured-date {
+		color: var(--muted);
+	}
+
+	.featured-post a {
+		display: grid;
+		gap: 1rem;
+		text-decoration: none;
+	}
+
+	.featured-post a p {
+		max-width: 38rem;
+		color: var(--muted);
+	}
+
+	.featured-post a span {
+		font-family: var(--mono);
+		font-size: 0.78rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+
+	.archive-listing {
+		padding-top: 2.5rem;
+	}
+
+	.archive-listing ol {
+		list-style: none;
+		padding: 1.5rem 0 0;
+		margin: 0;
+	}
+
+	.archive-listing li + li {
+		border-top: 1px solid rgba(123, 255, 159, 0.1);
+	}
+
+	.archive-listing a {
+		display: grid;
+		grid-template-columns: 4rem minmax(0, 1fr) auto;
+		gap: 1rem;
+		align-items: start;
+		padding: 1.35rem 0;
+		text-decoration: none;
+	}
+
+	.archive-index,
+	.archive-date {
+		font-family: var(--mono);
+		font-size: 0.78rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+	}
+
+	.archive-index {
+		color: var(--accent);
+	}
+
+	.archive-date,
+	.archive-copy p,
+	.archive-empty {
+		color: var(--muted);
+	}
+
+	.archive-copy {
+		display: grid;
+		gap: 0.55rem;
+	}
+
+	.archive-listing a:hover {
+		color: var(--accent);
+	}
+
+	.archive-empty {
+		padding-top: 1.5rem;
+	}
+
+	@media (max-width: 800px) {
+		.featured-post {
+			grid-template-columns: 1fr;
+			padding-top: 1.2rem;
+		}
+
+		.archive-listing a {
+			grid-template-columns: 1fr;
+			gap: 0.5rem;
+		}
+
+		.archive-date {
+			order: -1;
+		}
+	}
+</style>

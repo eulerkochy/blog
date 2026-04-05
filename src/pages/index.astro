@@ -1,8 +1,40 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const latestPost = posts[0];
+const signalColumns = [
+	'101001011010',
+	'RUST::OWNERSHIP',
+	'KERNEL::IO::TRACE',
+	'110010110111',
+	'CXX::LATENCY::MAP',
+	'OPERATING::SYSTEMS',
+	'001011010101',
+	'COMPILER::OUTPUT',
+	'HEAP::STACK::CACHE',
+	'111010010011',
+];
+const focusAreas = [
+	{
+		label: 'Systems',
+		copy: 'Kernel-adjacent notes, memory behavior, and pragmatic low-level tradeoffs.',
+	},
+	{
+		label: 'Rust + C++',
+		copy: 'Ownership, performance boundaries, and the sharp edges worth understanding.',
+	},
+	{
+		label: 'Problem Solving',
+		copy: 'Algorithms, contest habits, and the kind of debugging that leaves a mark.',
+	},
+];
 ---
 
 <!doctype html>
@@ -13,11 +45,379 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 	<body>
 		<Header />
 		<main>
-			<h1>Welcome</h1>
-			<p>
-				This is my personal blog.
-			</p>
+			<div class="page-shell">
+				<section class="hero">
+					<div class="hero-copy">
+						<p class="eyebrow">Encrypted journal / technical dispatches</p>
+						<h1>{SITE_TITLE}</h1>
+						<p class="hero-text">
+							A matrix-soaked technical notebook for systems programming, Rust,
+							C++, and everything that happens below the comfortable abstraction
+							layer.
+						</p>
+						<div class="button-row">
+							<a class="button-primary" href="/blog">Read the archive</a>
+							<a class="button-secondary" href="/about">About the author</a>
+						</div>
+					</div>
+					<div class="hero-visual" aria-hidden="true">
+						<div class="signal-frame">
+							<div class="signal-core"></div>
+							<div class="signal-columns">
+								{
+									signalColumns.map((column, index) => (
+										<span
+											style={`--offset:${index * 10}%; --delay:${index * -0.9}s; --duration:${8 + index * 0.55}s;`}
+										>
+											{column}
+										</span>
+									))
+								}
+							</div>
+							<div class="signal-copy">
+								<small>Live feed</small>
+								<strong>signal stable</strong>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section class="home-band">
+					<div class="section-heading">
+						<p class="eyebrow">Latest transmission</p>
+						<h2>Built like an archive. Read like intercepted traffic.</h2>
+						<p>
+							Short copy, strong hierarchy, and a reading flow that stays close
+							to the terminal aesthetic without turning the site into a gimmick.
+						</p>
+					</div>
+					<div class="surface-rule"></div>
+					<div class="feature-grid">
+						<div class="feature-copy">
+							<p class="feature-label">Signal profile</p>
+							<ul>
+								<li>High-contrast longform for code-heavy posts</li>
+								<li>Archive-first navigation with minimal chrome</li>
+								<li>Matrix atmosphere built from motion and texture</li>
+							</ul>
+						</div>
+						{
+							latestPost ? (
+								<a class="feature-post" href={`/blog/${latestPost.id}/`}>
+									<p class="feature-label">Latest post</p>
+									<h3>{latestPost.data.title}</h3>
+									<p>{latestPost.data.description}</p>
+									<span>Open transmission</span>
+								</a>
+							) : (
+								<div class="feature-post feature-post-empty">
+									<p class="feature-label">Latest post</p>
+									<h3>Archive incoming</h3>
+									<p>The layout is live and waiting for the next entry.</p>
+								</div>
+							)
+						}
+					</div>
+				</section>
+
+				<section class="focus-section">
+					<div class="section-heading">
+						<p class="eyebrow">Core threads</p>
+						<h2>Three lanes, one signal.</h2>
+					</div>
+					<div class="focus-list">
+						{
+							focusAreas.map((area, index) => (
+								<div class="focus-item">
+									<p class="focus-index">{String(index + 1).padStart(2, '0')}</p>
+									<div>
+										<h3>{area.label}</h3>
+										<p>{area.copy}</p>
+									</div>
+								</div>
+							))
+						}
+					</div>
+				</section>
+
+				<section class="closing-strip">
+					<div class="closing-copy">
+						<p class="eyebrow">Stay connected</p>
+						<h2>Follow the archive as it grows.</h2>
+					</div>
+					<div class="button-row">
+						<a class="button-primary" href="/blog">Browse posts</a>
+						<a class="button-secondary" href="/rss.xml">Subscribe via RSS</a>
+					</div>
+				</section>
+			</div>
 		</main>
 		<Footer />
 	</body>
 </html>
+<style>
+	.hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+		gap: 2rem;
+		padding: 4.4rem 0 3rem;
+		min-height: calc(100svh - 4.75rem);
+		align-items: center;
+	}
+
+	.hero-copy {
+		display: grid;
+		gap: 1.3rem;
+		max-width: 36rem;
+		animation: reveal-up 700ms ease-out both;
+	}
+
+	.hero-text {
+		max-width: 33rem;
+		color: var(--muted);
+		font-size: 1.12rem;
+	}
+
+	.hero-visual {
+		display: flex;
+		justify-content: flex-end;
+		animation: reveal-up 900ms ease-out both;
+	}
+
+	.signal-frame {
+		position: relative;
+		width: min(100%, 480px);
+		aspect-ratio: 4 / 5;
+		border: 1px solid var(--line);
+		border-radius: 2rem;
+		background:
+			linear-gradient(180deg, rgba(123, 255, 159, 0.05), transparent 34%),
+			radial-gradient(circle at 50% 35%, rgba(123, 255, 159, 0.16), transparent 30%),
+			rgba(2, 8, 5, 0.9);
+		box-shadow: var(--shadow);
+		overflow: hidden;
+	}
+
+	.signal-frame::before,
+	.signal-frame::after {
+		content: "";
+		position: absolute;
+		inset: 1rem;
+		border: 1px solid rgba(123, 255, 159, 0.08);
+		border-radius: 1.4rem;
+	}
+
+	.signal-frame::after {
+		inset: auto 1.3rem 1.3rem;
+		height: 1px;
+		border: 0;
+		background: linear-gradient(90deg, rgba(123, 255, 159, 0.48), transparent);
+	}
+
+	.signal-core {
+		position: absolute;
+		inset: 19% 16% auto;
+		height: 42%;
+		border-radius: 999px;
+		background: radial-gradient(circle, rgba(123, 255, 159, 0.16), transparent 70%);
+		filter: blur(10px);
+		animation: float 6s ease-in-out infinite;
+	}
+
+	.signal-columns {
+		position: absolute;
+		inset: 0;
+		overflow: hidden;
+		font-family: var(--mono);
+		font-size: 0.92rem;
+		letter-spacing: 0.18em;
+		color: rgba(123, 255, 159, 0.8);
+	}
+
+	.signal-columns span {
+		position: absolute;
+		top: -20%;
+		left: var(--offset);
+		writing-mode: vertical-rl;
+		text-orientation: upright;
+		opacity: 0;
+		animation: matrix-fall var(--duration) linear infinite;
+		animation-delay: var(--delay);
+		text-shadow: 0 0 18px rgba(123, 255, 159, 0.28);
+	}
+
+	.signal-copy {
+		position: absolute;
+		left: 1.5rem;
+		right: 1.5rem;
+		bottom: 1.6rem;
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		font-family: var(--mono);
+		text-transform: uppercase;
+	}
+
+	.signal-copy small {
+		font-size: 0.74rem;
+		letter-spacing: 0.18em;
+		color: var(--muted);
+	}
+
+	.signal-copy strong {
+		font-size: 0.82rem;
+		letter-spacing: 0.16em;
+		color: var(--accent);
+	}
+
+	.home-band,
+	.focus-section,
+	.closing-strip {
+		padding-top: 3rem;
+	}
+
+	.feature-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+		gap: 1.5rem;
+		padding-top: 1.5rem;
+		align-items: start;
+	}
+
+	.feature-copy,
+	.feature-post {
+		padding: 1.4rem 1.5rem 1.5rem;
+		border: 1px solid var(--line);
+		border-radius: 1.6rem;
+		background: var(--surface);
+		backdrop-filter: blur(14px);
+	}
+
+	.feature-copy ul {
+		display: grid;
+		gap: 0.8rem;
+		padding-left: 1rem;
+		color: #d6e9d6;
+	}
+
+	.feature-post {
+		display: grid;
+		gap: 0.95rem;
+		text-decoration: none;
+	}
+
+	.feature-post p {
+		color: var(--muted);
+	}
+
+	.feature-post span {
+		font-family: var(--mono);
+		font-size: 0.78rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+
+	.feature-post:hover {
+		transform: translateY(-2px);
+		border-color: var(--line-strong);
+	}
+
+	.feature-post-empty {
+		cursor: default;
+	}
+
+	.feature-label {
+		font-family: var(--mono);
+		font-size: 0.74rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+
+	.focus-list {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1.25rem;
+		padding-top: 1.6rem;
+	}
+
+	.focus-item {
+		display: grid;
+		gap: 1rem;
+		padding-top: 1.3rem;
+		border-top: 1px solid var(--line);
+	}
+
+	.focus-item p:last-child {
+		color: var(--muted);
+	}
+
+	.focus-index {
+		font-family: var(--mono);
+		font-size: 0.74rem;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+
+	.closing-strip {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: end;
+		justify-content: space-between;
+		gap: 1rem 2rem;
+		padding-bottom: 1rem;
+	}
+
+	.closing-copy {
+		display: grid;
+		gap: 1rem;
+		max-width: 34rem;
+	}
+
+	@media (max-width: 900px) {
+		.hero {
+			grid-template-columns: 1fr;
+			min-height: auto;
+			padding-top: 2.4rem;
+		}
+
+		.hero-visual {
+			justify-content: stretch;
+		}
+
+		.signal-frame {
+			width: 100%;
+			aspect-ratio: 16 / 11;
+		}
+
+		.feature-grid,
+		.focus-list {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 720px) {
+		.hero {
+			padding-top: 2rem;
+			gap: 1.5rem;
+		}
+
+		.hero-text {
+			font-size: 1rem;
+		}
+
+		.signal-frame {
+			aspect-ratio: 5 / 6;
+			border-radius: 1.5rem;
+		}
+
+		.feature-copy,
+		.feature-post {
+			padding: 1.2rem;
+			border-radius: 1.2rem;
+		}
+	}
+</style>

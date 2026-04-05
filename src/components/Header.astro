@@ -5,7 +5,13 @@ import HeaderLink from './HeaderLink.astro';
 
 <header>
 	<nav>
-		<h2><a href="/">{SITE_TITLE}</a></h2>
+		<a class="brand" href="/">
+			<span class="brand-mark">01</span>
+			<span class="brand-copy">
+				<strong>{SITE_TITLE}</strong>
+				<small>Matrix signal log</small>
+			</span>
+		</a>
 		<div class="internal-links">
 			<HeaderLink href="/">Home</HeaderLink>
 			<HeaderLink href="/blog">Blog</HeaderLink>
@@ -15,42 +21,107 @@ import HeaderLink from './HeaderLink.astro';
 </header>
 <style>
 	header {
-		margin: 0;
-		padding: 0 1em;
-		background: #1a1a1a;
-		border-bottom: 1px solid rgba(0, 255, 65, 0.2);
-	}
-	h2 {
-		margin: 0;
-		font-size: 1em;
+		position: sticky;
+		top: 0;
+		z-index: 20;
+		padding: 0 1rem;
+		backdrop-filter: blur(18px);
+		background: linear-gradient(180deg, rgba(2, 8, 5, 0.9), rgba(2, 8, 5, 0.68));
+		border-bottom: 1px solid var(--line);
 	}
 
-	h2 a,
-	h2 a.active {
-		text-decoration: none;
-		color: var(--accent);
-	}
-	h2 a:hover {
-		text-shadow: var(--neon-glow);
-	}
 	nav {
+		width: min(1180px, 100%);
+		margin: 0 auto;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 1rem;
+		min-height: 4.75rem;
 	}
-	nav a {
-		padding: 1em 0.5em;
+
+	.brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.85rem;
+		text-decoration: none;
+		color: var(--text);
+	}
+
+	.brand-mark {
+		display: grid;
+		place-items: center;
+		width: 2.6rem;
+		height: 2.6rem;
+		border: 1px solid var(--line-strong);
+		border-radius: 999px;
+		font-family: var(--mono);
+		font-size: 0.8rem;
+		letter-spacing: 0.12em;
 		color: var(--accent);
-		border-bottom: 4px solid transparent;
-		text-decoration: none;
-		transition: all 0.2s ease;
+		box-shadow: inset 0 0 18px rgba(123, 255, 159, 0.08);
 	}
-	nav a:hover {
-		text-shadow: var(--neon-glow);
+
+	.brand-copy {
+		display: grid;
+		gap: 0.1rem;
 	}
-	nav a.active {
-		text-decoration: none;
-		border-bottom-color: var(--accent);
-		text-shadow: var(--neon-glow);
+
+	.brand-copy strong {
+		font-size: 0.96rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.brand-copy small {
+		font-family: var(--mono);
+		font-size: 0.68rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+
+	.internal-links {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 1.1rem;
+	}
+
+	.internal-links :global(a) {
+		padding: 0.45rem 0;
+		font-family: var(--mono);
+		font-size: 0.8rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--muted);
+		border-bottom: 1px solid transparent;
+	}
+
+	.internal-links :global(a:hover),
+	.internal-links :global(a.active) {
+		color: var(--accent);
+		border-bottom-color: var(--line-strong);
+	}
+
+	@media (max-width: 720px) {
+		header {
+			padding: 0 0.6rem;
+		}
+
+		nav {
+			min-height: 4.25rem;
+			flex-direction: column;
+			align-items: flex-start;
+			justify-content: center;
+			padding: 0.75rem 0;
+		}
+
+		.internal-links {
+			width: 100%;
+			justify-content: flex-start;
+			gap: 0.9rem;
+		}
 	}
 </style>
