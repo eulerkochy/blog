@@ -5,15 +5,34 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & {
+	headings?: { depth: number; slug: string; text: string }[];
+	readingTime?: number;
+	prevPost?: { title: string; slug: string } | null;
+	nextPost?: { title: string; slug: string } | null;
+};
 
-const { title, description, pubDate, updatedDate } = Astro.props;
+const { title, description, pubDate, updatedDate, headings = [], readingTime, prevPost, nextPost } = Astro.props;
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
+<!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
+			.progress-bar {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 0%;
+				height: 3px;
+				background: linear-gradient(90deg, var(--accent), var(--accent-cold));
+				z-index: 30;
+				transition: width 50ms linear;
+				box-shadow: 0 0 8px rgba(123, 255, 159, 0.4);
+			}
+
 			.post-shell {
 				width: min(1180px, calc(100% - 2rem));
 				margin: 0 auto;
@@ -72,8 +91,91 @@ const { title, description, pubDate, updatedDate } = Astro.props;
 				line-height: 1.5;
 			}
 
+			.toc {
+				padding: 1rem 0;
+				border-top: 1px solid rgba(123, 255, 159, 0.12);
+			}
+
+			.toc-label {
+				font-family: var(--mono);
+				font-size: 0.72rem;
+				letter-spacing: 0.18em;
+				text-transform: uppercase;
+				color: var(--accent);
+				margin-bottom: 0.6rem;
+			}
+
+			.toc ol {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				display: grid;
+				gap: 0.35rem;
+			}
+
+			.toc a {
+				font-size: 0.84rem;
+				color: var(--muted);
+				text-decoration: none;
+				transition: color 180ms ease;
+			}
+
+			.toc a:hover {
+				color: var(--accent);
+			}
+
+			.toc-h3 {
+				padding-left: 1rem;
+			}
+
 			.article-wrap {
 				min-width: 0;
+			}
+
+			.post-nav {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 1.25rem;
+				margin-top: 3rem;
+				padding-top: 2rem;
+				border-top: 1px solid var(--line);
+			}
+
+			.post-nav-link {
+				display: grid;
+				gap: 0.5rem;
+				padding: 1.2rem 1.4rem;
+				border: 1px solid var(--line);
+				border-radius: 1.4rem;
+				background: var(--surface);
+				text-decoration: none;
+				transition:
+					transform 180ms ease,
+					border-color 180ms ease;
+			}
+
+			.post-nav-link:hover {
+				transform: translateY(-2px);
+				border-color: var(--line-strong);
+			}
+
+			.post-nav-label {
+				font-family: var(--mono);
+				font-size: 0.72rem;
+				letter-spacing: 0.18em;
+				text-transform: uppercase;
+				color: var(--accent);
+			}
+
+			.post-nav-title {
+				color: var(--text);
+				font-size: 1rem;
+				line-height: 1.4;
+			}
+
+			.post-nav-next {
+				text-align: right;
+				grid-column: 2;
 			}
 
 			@media (max-width: 900px) {
@@ -92,6 +194,19 @@ const { title, description, pubDate, updatedDate } = Astro.props;
 					grid-template-columns: repeat(2, minmax(0, 1fr));
 					gap: 1rem;
 				}
+
+				.toc {
+					grid-column: 1 / -1;
+				}
+
+				.post-nav {
+					grid-template-columns: 1fr;
+				}
+
+				.post-nav-next {
+					text-align: left;
+					grid-column: 1;
+				}
 			}
 
 			@media (max-width: 640px) {
@@ -102,6 +217,7 @@ const { title, description, pubDate, updatedDate } = Astro.props;
 		</style>
 	</head>
 	<body>
+		<div class="progress-bar" id="progress-bar"></div>
 		<Header />
 		<main>
 			<article class="post-shell">
@@ -124,19 +240,66 @@ const { title, description, pubDate, updatedDate } = Astro.props;
 								</div>
 							)
 						}
-						<div class="meta-block">
-							<span>Status</span>
-							<p>Signal locked. Optimized for reading, code blocks, and reference.</p>
-						</div>
+						{
+							readingTime && (
+								<div class="meta-block">
+									<span>Reading time</span>
+									<p>{readingTime} min read</p>
+								</div>
+							)
+						}
+						{
+							tocHeadings.length > 0 && (
+								<nav class="toc">
+									<p class="toc-label">Contents</p>
+									<ol>
+										{tocHeadings.map((h) => (
+											<li class:list={[{ 'toc-h3': h.depth === 3 }]}>
+												<a href={`#${h.slug}`}>{h.text}</a>
+											</li>
+										))}
+									</ol>
+								</nav>
+							)
+						}
 					</aside>
 					<div class="article-wrap">
 						<div class="prose">
 							<slot />
 						</div>
+						{
+							(prevPost || nextPost) && (
+								<nav class="post-nav">
+									{prevPost && (
+										<a class="post-nav-link" href={`/blog/${prevPost.slug}/`}>
+											<span class="post-nav-label">&larr; Previous</span>
+											<span class="post-nav-title">{prevPost.title}</span>
+										</a>
+									)}
+									{nextPost && (
+										<a class="post-nav-link post-nav-next" href={`/blog/${nextPost.slug}/`}>
+											<span class="post-nav-label">Next &rarr;</span>
+											<span class="post-nav-title">{nextPost.title}</span>
+										</a>
+									)}
+								</nav>
+							)
+						}
 					</div>
 				</div>
 			</article>
 		</main>
 		<Footer />
+		<script>
+			const bar = document.getElementById('progress-bar');
+			function updateProgress() {
+				const scrollTop = window.scrollY;
+				const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+				const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+				if (bar) bar.style.width = `${Math.min(progress, 100)}%`;
+			}
+			window.addEventListener('scroll', updateProgress, { passive: true });
+			updateProgress();
+		</script>
 	</body>
 </html>

@@ -2,6 +2,17 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+
+const profile = [
+	{ key: 'Handle', value: 'eulerkochy' },
+	{ key: 'Focus', value: 'Systems programming, performance, correctness' },
+	{ key: 'Stack', value: 'Rust, C++, Linux' },
+	{ key: 'Status', value: 'Online' },
+];
+
+const links = [
+	{ cmd: 'github', href: 'https://github.com/eulerkochy', label: 'github.com/eulerkochy' },
+];
 ---
 
 <!doctype html>
@@ -9,7 +20,7 @@ import Header from '../components/Header.astro';
 	<head>
 		<BaseHead
 			title="About | Infinity & Beyond"
-			description="About the author behind Infinity & Beyond."
+			description="About the operator behind Infinity & Beyond."
 		/>
 	</head>
 	<body>
@@ -19,34 +30,69 @@ import Header from '../components/Header.astro';
 				<section class="about-hero">
 					<div class="section-heading">
 						<p class="eyebrow">About / operator profile</p>
-						<h1>Writing from the systems layer.</h1>
-						<p>
-							Infinity & Beyond is a personal archive for systems programming
-							notes, implementation details, and the occasional hard-earned lesson
-							from low-level work.
-						</p>
+						<h1>whoami</h1>
 					</div>
 				</section>
 
-				<section class="about-grid">
-					<div class="about-column">
-						<p class="about-label">What shows up here</p>
-						<ul>
-							<li>Rust and C++ deep dives with an emphasis on tradeoffs</li>
-							<li>Operating systems concepts, debugging habits, and performance notes</li>
-							<li>Problem-solving patterns that carry from contests into real engineering</li>
-						</ul>
+				<section class="terminal-block">
+					<div class="terminal-header">
+						<span class="terminal-dot"></span>
+						<span class="terminal-dot"></span>
+						<span class="terminal-dot"></span>
+						<span class="terminal-title">operator-profile</span>
 					</div>
-					<div class="about-column">
-						<p class="about-label">Why this blog exists</p>
-						<p>
-							To turn fleeting technical intuition into durable reference. The goal
-							is less content velocity and more signal density.
-						</p>
-						<div class="button-row">
-							<a class="button-primary" href="/blog">Open the archive</a>
-							<a class="button-secondary" href="/rss.xml">Follow via RSS</a>
+					<div class="terminal-body">
+						<div class="terminal-section">
+							<p class="terminal-prompt">$ cat /etc/operator.conf</p>
+							<dl class="profile-list">
+								{profile.map(({ key, value }) => (
+									<div class="profile-row">
+										<dt>{key}</dt>
+										<dd>{value}</dd>
+									</div>
+								))}
+							</dl>
 						</div>
+
+						<div class="terminal-section">
+							<p class="terminal-prompt">$ cat /var/log/mission.log</p>
+							<p class="terminal-output">
+								Infinity & Beyond is a personal archive for systems programming
+								notes, implementation details, and the occasional hard-earned
+								lesson from low-level work. The goal is less content velocity and
+								more signal density.
+							</p>
+						</div>
+
+						<div class="terminal-section">
+							<p class="terminal-prompt">$ ls ./topics/</p>
+							<ul class="topic-list">
+								<li>rust-and-cpp-deep-dives/</li>
+								<li>operating-systems-debugging/</li>
+								<li>competitive-programming-patterns/</li>
+							</ul>
+						</div>
+
+						<div class="terminal-section">
+							<p class="terminal-prompt">$ cat ./links.txt</p>
+							<div class="link-list">
+								{links.map(({ cmd, href, label }) => (
+									<p>
+										<span class="link-cmd">{cmd}</span>
+										<a href={href} target="_blank" rel="noopener noreferrer">{label}</a>
+									</p>
+								))}
+							</div>
+						</div>
+
+						<p class="terminal-prompt terminal-cursor">$ <span class="cursor">_</span></p>
+					</div>
+				</section>
+
+				<section class="about-cta">
+					<div class="button-row">
+						<a class="button-primary" href="/blog">Open the archive</a>
+						<a class="button-secondary" href="/rss.xml">Follow via RSS</a>
 					</div>
 				</section>
 			</div>
@@ -64,42 +110,162 @@ import Header from '../components/Header.astro';
 		padding-bottom: 2rem;
 	}
 
-	.about-grid {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 1.5rem;
-		padding-top: 1.5rem;
-		border-top: 1px solid var(--line);
+	.terminal-block {
+		border: 1px solid var(--line);
+		border-radius: 1.4rem;
+		overflow: hidden;
+		background: var(--surface-strong);
+		max-width: 52rem;
 	}
 
-	.about-column {
-		display: grid;
-		gap: 1rem;
-		padding: 1.3rem 0 0;
+	.terminal-header {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.85rem 1.2rem;
+		background: rgba(123, 255, 159, 0.04);
+		border-bottom: 1px solid var(--line);
 	}
 
-	.about-column ul {
-		display: grid;
-		gap: 0.7rem;
-		padding-left: 1rem;
-		color: #d6e9d6;
+	.terminal-dot {
+		width: 0.6rem;
+		height: 0.6rem;
+		border-radius: 999px;
+		background: rgba(123, 255, 159, 0.25);
 	}
 
-	.about-column p:last-child {
+	.terminal-dot:first-child {
+		background: rgba(255, 95, 86, 0.6);
+	}
+
+	.terminal-dot:nth-child(2) {
+		background: rgba(255, 189, 46, 0.6);
+	}
+
+	.terminal-dot:nth-child(3) {
+		background: rgba(39, 201, 63, 0.6);
+	}
+
+	.terminal-title {
+		margin-left: 0.5rem;
+		font-family: var(--mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.14em;
 		color: var(--muted);
 	}
 
-	.about-label {
+	.terminal-body {
+		padding: 1.4rem 1.5rem;
 		font-family: var(--mono);
-		font-size: 0.74rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
+		font-size: 0.88rem;
+		line-height: 1.7;
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	.terminal-section {
+		display: grid;
+		gap: 0.6rem;
+	}
+
+	.terminal-prompt {
 		color: var(--accent);
 	}
 
-	@media (max-width: 800px) {
-		.about-grid {
-			grid-template-columns: 1fr;
+	.terminal-output {
+		color: var(--muted);
+		padding-left: 1rem;
+		font-family: "Atkinson", sans-serif;
+		font-size: 0.94rem;
+	}
+
+	.profile-list {
+		margin: 0;
+		padding-left: 1rem;
+		display: grid;
+		gap: 0.3rem;
+	}
+
+	.profile-row {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.profile-row dt {
+		color: var(--accent-cold);
+		min-width: 7rem;
+	}
+
+	.profile-row dt::after {
+		content: " =";
+	}
+
+	.profile-row dd {
+		margin: 0;
+		color: var(--text);
+	}
+
+	.topic-list {
+		list-style: none;
+		padding-left: 1rem;
+		margin: 0;
+		display: grid;
+		gap: 0.2rem;
+		color: var(--accent-cold);
+	}
+
+	.link-list {
+		padding-left: 1rem;
+	}
+
+	.link-cmd {
+		color: var(--accent-cold);
+		margin-right: 0.8rem;
+	}
+
+	.link-cmd::before {
+		content: "[";
+	}
+
+	.link-cmd::after {
+		content: "]";
+	}
+
+	.link-list a {
+		color: var(--text);
+		text-decoration-color: rgba(123, 255, 159, 0.25);
+	}
+
+	.cursor {
+		animation: blink-cursor 1s step-end infinite;
+	}
+
+	@keyframes blink-cursor {
+		0%, 100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0;
+		}
+	}
+
+	.about-cta {
+		padding-top: 2rem;
+	}
+
+	@media (max-width: 720px) {
+		.terminal-body {
+			padding: 1rem 1.1rem;
+			font-size: 0.82rem;
+		}
+
+		.profile-row {
+			flex-direction: column;
+			gap: 0;
+		}
+
+		.profile-row dt {
+			min-width: auto;
 		}
 	}
 </style>
