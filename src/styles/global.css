@@ -30,6 +30,7 @@
 	--shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
 	--mono: "SFMono-Regular", "SF Mono", "IBM Plex Mono", "Courier New", monospace;
 	--heading: "Space Mono", monospace;
+	color-scheme: dark;
 }
 
 * {
@@ -38,6 +39,9 @@
 
 html {
 	scroll-behavior: smooth;
+	background-color: var(--bg-0);
+	color-scheme: dark;
+	-webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -46,6 +50,7 @@ body {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+	background-color: var(--bg-0);
 	background:
 		radial-gradient(circle at 0% 0%, rgba(22, 240, 122, 0.16), transparent 28%),
 		radial-gradient(circle at 100% 0%, rgba(116, 240, 255, 0.08), transparent 24%),
@@ -259,6 +264,10 @@ table {
 	gap: 0.9rem;
 }
 
+.button-row > * {
+	flex: 0 0 auto;
+}
+
 .button-primary,
 .button-secondary {
 	display: inline-flex;
@@ -451,5 +460,92 @@ h1:hover {
 	.page-shell {
 		width: min(100%, calc(100% - 1.2rem));
 		padding-bottom: 4rem;
+	}
+}
+
+@media (max-width: 480px) {
+	body {
+		font-size: 16px;
+	}
+
+	.page-shell {
+		width: calc(100% - 1.5rem);
+		padding-bottom: 3rem;
+	}
+
+	.eyebrow {
+		font-size: 0.7rem;
+		letter-spacing: 0.2em;
+		gap: 0.5rem;
+	}
+
+	.eyebrow::before {
+		width: 1.6rem;
+	}
+
+	.section-heading {
+		gap: 0.75rem;
+	}
+
+	.button-primary,
+	.button-secondary {
+		min-height: 2.9rem;
+		padding: 0 1rem;
+		font-size: 0.78rem;
+		letter-spacing: 0.1em;
+	}
+
+	.button-row {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.7rem;
+	}
+
+	.button-row > * {
+		width: 100%;
+	}
+
+	pre {
+		padding: 1rem;
+		border-radius: 0.75rem;
+		font-size: 0.82em;
+	}
+
+	code {
+		font-size: 0.85em;
+		padding: 0.1em 0.3em;
+	}
+
+	.prose {
+		font-size: 1rem;
+	}
+
+	.prose h2 {
+		font-size: clamp(1.4rem, 5vw, 1.8rem);
+		margin-top: 2.2rem;
+	}
+
+	.prose h3 {
+		font-size: clamp(1.2rem, 4vw, 1.5rem);
+		margin-top: 2rem;
+	}
+
+	.prose > * + * {
+		margin-top: 1rem;
+	}
+
+	.prose ul,
+	.prose ol {
+		padding-left: 1rem;
+	}
+
+	blockquote {
+		padding-left: 0.8rem;
+	}
+
+	table {
+		display: block;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 }

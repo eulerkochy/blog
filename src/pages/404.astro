@@ -78,6 +78,23 @@ import Header from '../components/Header.astro';
 		font-size: 1.05rem;
 	}
 
+	@media (max-width: 480px) {
+		.lost-shell {
+			gap: 1rem;
+			padding: 3.5rem 0.75rem 2.5rem;
+			min-height: calc(100svh - 7rem);
+		}
+
+		.lost-code {
+			font-size: 0.7rem;
+			letter-spacing: 0.16em;
+		}
+
+		.lost-desc {
+			font-size: 0.94rem;
+		}
+	}
+
 	@keyframes glitch-persistent {
 		0%, 85%, 100% {
 			text-shadow: none;

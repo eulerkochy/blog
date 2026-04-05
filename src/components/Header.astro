@@ -124,17 +124,72 @@ import HeaderLink from './HeaderLink.astro';
 		}
 
 		nav {
-			min-height: 4.25rem;
+			min-height: auto;
 			flex-direction: column;
-			align-items: flex-start;
+			align-items: stretch;
 			justify-content: center;
-			padding: 0.75rem 0;
+			padding: 0.65rem 0;
+			gap: 0.5rem;
+		}
+
+		.brand {
+			width: 100%;
 		}
 
 		.internal-links {
 			width: 100%;
-			justify-content: flex-start;
-			gap: 0.9rem;
+			justify-content: space-between;
+			gap: 0.2rem;
+		}
+
+		.internal-links :global(a) {
+			flex: 1 1 0;
+			justify-content: center;
+			padding: 0.5rem 0.55rem;
+			font-size: 0.75rem;
+			min-height: 2.4rem;
+			display: inline-flex;
+			align-items: center;
+		}
+	}
+
+	@media (max-width: 480px) {
+		header {
+			padding: 0 0.45rem;
+		}
+
+		nav {
+			padding: 0.5rem 0 0.6rem;
+		}
+
+		.brand {
+			gap: 0.6rem;
+		}
+
+		.brand-mark {
+			width: 2.2rem;
+			height: 2.2rem;
+			font-size: 0.72rem;
+		}
+
+		.brand-copy strong {
+			font-size: 0.85rem;
+		}
+
+		.brand-copy small {
+			font-size: 0.62rem;
+			letter-spacing: 0.14em;
+		}
+
+		.internal-links {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+
+		.internal-links :global(a) {
+			padding: 0.55rem 0.3rem;
+			font-size: 0.68rem;
+			letter-spacing: 0.12em;
 		}
 	}
 </style>
