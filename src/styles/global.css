@@ -29,6 +29,7 @@
 	--accent-cold: #74f0ff;
 	--shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
 	--mono: "SFMono-Regular", "SF Mono", "IBM Plex Mono", "Courier New", monospace;
+	--heading: "Space Mono", monospace;
 }
 
 * {
@@ -107,9 +108,10 @@ h4,
 h5,
 h6 {
 	margin: 0;
+	font-family: var(--heading);
 	font-weight: 700;
-	line-height: 0.98;
-	letter-spacing: -0.03em;
+	line-height: 1.05;
+	letter-spacing: -0.02em;
 }
 
 h1 {
