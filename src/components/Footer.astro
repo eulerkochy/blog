@@ -3,15 +3,60 @@ const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} All rights reserved.
+	<div class="footer-shell">
+		<p class="eyebrow">End of transmission</p>
+		<div class="footer-copy">
+			<p>
+				&copy; {today.getFullYear()} Infinity & Beyond. Built for systems notes,
+				long reads, and clean signal.
+			</p>
+			<a href="/rss.xml">RSS</a>
+		</div>
+	</div>
 </footer>
 <style>
 	footer {
-		padding: 2em 1em;
-		background: #1a1a1a;
-		color: var(--accent);
-		text-align: center;
-		border-top: 1px solid rgba(0, 255, 65, 0.2);
 		margin-top: auto;
+		padding: 0 1rem 2rem;
+		border-top: 1px solid var(--line);
+		background: linear-gradient(180deg, rgba(2, 8, 5, 0), rgba(2, 8, 5, 0.7));
+	}
+
+	.footer-shell {
+		width: min(1180px, 100%);
+		margin: 0 auto;
+		padding-top: 1.75rem;
+		display: grid;
+		gap: 1rem;
+	}
+
+	.footer-copy {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		color: var(--muted);
+		font-size: 0.94rem;
+	}
+
+	.footer-copy a {
+		font-family: var(--mono);
+		font-size: 0.78rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		text-decoration: none;
+		color: var(--accent);
+	}
+
+	@media (max-width: 720px) {
+		footer {
+			padding: 0 0.6rem 1.4rem;
+		}
+
+		.footer-copy {
+			align-items: flex-start;
+			flex-direction: column;
+		}
 	}
 </style>

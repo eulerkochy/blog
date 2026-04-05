@@ -1,13 +1,105 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
 ---
 
-<Layout
-	title="About Me"
-	description="About me"
-	pubDate={new Date()}
->
-	<p>
-		Welcome to my blog. This is where I share my thoughts and ideas.
-	</p>
-</Layout>
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="About | Infinity & Beyond"
+			description="About the author behind Infinity & Beyond."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="page-shell about-shell">
+				<section class="about-hero">
+					<div class="section-heading">
+						<p class="eyebrow">About / operator profile</p>
+						<h1>Writing from the systems layer.</h1>
+						<p>
+							Infinity & Beyond is a personal archive for systems programming
+							notes, implementation details, and the occasional hard-earned lesson
+							from low-level work.
+						</p>
+					</div>
+				</section>
+
+				<section class="about-grid">
+					<div class="about-column">
+						<p class="about-label">What shows up here</p>
+						<ul>
+							<li>Rust and C++ deep dives with an emphasis on tradeoffs</li>
+							<li>Operating systems concepts, debugging habits, and performance notes</li>
+							<li>Problem-solving patterns that carry from contests into real engineering</li>
+						</ul>
+					</div>
+					<div class="about-column">
+						<p class="about-label">Why this blog exists</p>
+						<p>
+							To turn fleeting technical intuition into durable reference. The goal
+							is less content velocity and more signal density.
+						</p>
+						<div class="button-row">
+							<a class="button-primary" href="/blog">Open the archive</a>
+							<a class="button-secondary" href="/rss.xml">Follow via RSS</a>
+						</div>
+					</div>
+				</section>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+<style>
+	.about-shell {
+		padding-top: 3rem;
+	}
+
+	.about-hero {
+		max-width: 52rem;
+		padding-bottom: 2rem;
+	}
+
+	.about-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--line);
+	}
+
+	.about-column {
+		display: grid;
+		gap: 1rem;
+		padding: 1.3rem 0 0;
+	}
+
+	.about-column ul {
+		display: grid;
+		gap: 0.7rem;
+		padding-left: 1rem;
+		color: #d6e9d6;
+	}
+
+	.about-column p:last-child {
+		color: var(--muted);
+	}
+
+	.about-label {
+		font-family: var(--mono);
+		font-size: 0.74rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+
+	@media (max-width: 800px) {
+		.about-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

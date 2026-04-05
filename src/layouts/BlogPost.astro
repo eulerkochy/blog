@@ -14,67 +14,126 @@ const { title, description, pubDate, updatedDate } = Astro.props;
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
-			main {
-				width: 100%;
-				max-width: 960px;
+			.post-shell {
+				width: min(1180px, calc(100% - 2rem));
 				margin: 0 auto;
-				padding: 0 1em;
-				flex: 1;
+				padding: 2.8rem 0 5rem;
 			}
-			article {
-				width: 100%;
+
+			.post-hero {
+				display: grid;
+				gap: 1.1rem;
+				max-width: 54rem;
+				padding-bottom: 2rem;
+				border-bottom: 1px solid var(--line);
 			}
-			.prose {
-				width: 720px;
-				max-width: 100%;
-				margin: 0 auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+
+			.post-description {
+				max-width: 40rem;
+				color: var(--muted);
+				font-size: 1.08rem;
 			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
+
+			.post-grid {
+				display: grid;
+				grid-template-columns: minmax(200px, 250px) minmax(0, 1fr);
+				gap: 2rem;
+				padding-top: 2rem;
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
+
+			.post-meta {
+				position: sticky;
+				top: 6.5rem;
+				align-self: start;
+				display: grid;
+				gap: 1rem;
+				padding-top: 0.35rem;
+			}
+
+			.meta-block {
+				display: grid;
+				gap: 0.35rem;
+				padding: 1rem 0;
+				border-top: 1px solid rgba(123, 255, 159, 0.12);
+			}
+
+			.meta-block span {
+				font-family: var(--mono);
+				font-size: 0.72rem;
+				letter-spacing: 0.18em;
+				text-transform: uppercase;
 				color: var(--accent);
 			}
-			.title hr {
-				border-top-color: var(--accent);
-				opacity: 0.5;
+
+			.meta-block strong,
+			.meta-block p {
+				color: var(--muted);
+				font-size: 0.92rem;
+				line-height: 1.5;
 			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+
+			.article-wrap {
+				min-width: 0;
 			}
-			.last-updated-on {
-				font-style: italic;
+
+			@media (max-width: 900px) {
+				.post-shell {
+					width: min(100%, calc(100% - 1.2rem));
+					padding-top: 2rem;
+				}
+
+				.post-grid {
+					grid-template-columns: 1fr;
+					gap: 1.5rem;
+				}
+
+				.post-meta {
+					position: static;
+					grid-template-columns: repeat(2, minmax(0, 1fr));
+					gap: 1rem;
+				}
+			}
+
+			@media (max-width: 640px) {
+				.post-meta {
+					grid-template-columns: 1fr;
+				}
 			}
 		</style>
 	</head>
-
 	<body>
 		<Header />
 		<main>
-			<article>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
+			<article class="post-shell">
+				<div class="post-hero">
+					<p class="eyebrow">Post / longform transmission</p>
+					<h1>{title}</h1>
+					<p class="post-description">{description}</p>
+				</div>
+				<div class="post-grid">
+					<aside class="post-meta">
+						<div class="meta-block">
+							<span>Published</span>
+							<strong><FormattedDate date={pubDate} /></strong>
 						</div>
-						<h1>{title}</h1>
-						<hr />
+						{
+							updatedDate && (
+								<div class="meta-block">
+									<span>Updated</span>
+									<strong><FormattedDate date={updatedDate} /></strong>
+								</div>
+							)
+						}
+						<div class="meta-block">
+							<span>Status</span>
+							<p>Signal locked. Optimized for reading, code blocks, and reference.</p>
+						</div>
+					</aside>
+					<div class="article-wrap">
+						<div class="prose">
+							<slot />
+						</div>
 					</div>
-					<slot />
 				</div>
 			</article>
 		</main>
